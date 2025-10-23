@@ -27,4 +27,30 @@ execute the code below from the root of the repo.
 ```bash
 python3 app.py
 ```
-
+```json
+Schema
+--------
+{
+  "DISCORD_ID": "DISCORD SERVER ID HERE",
+  "WH_URL": "WEBHOOK URL HERE",
+  "USER_ID": "DISCORD USER ID HERE",
+  "GAMES": [
+    {
+      "name": "Dyson Sphere Program",
+      "appid": "1366540"
+    },
+    {
+      "name": "Factorio",
+      "appid": "427520"
+    },
+    {
+      "name": "Metro 2033",
+      "appid": "43110"
+    },
+    {
+      "name": "Dead Space: Remastered",
+      "appid": "1693980"
+    }
+  ]
+}
+```
