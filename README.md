@@ -27,9 +27,10 @@ execute the code below from the root of the repo.
 ```bash
 python3 app.py
 ```
-```json
 Schema
 --------
+
+```json
 {
   "DISCORD_ID": "DISCORD SERVER ID HERE",
   "WH_URL": "WEBHOOK URL HERE",
