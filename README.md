@@ -7,6 +7,8 @@
 - Builds database if not found
 - Implements python built-in logging and log rotation
 
+<img width="519" height="554" alt="Screenshot 2025-10-23 180313" src="https://github.com/user-attachments/assets/9682486e-643e-4235-b7e6-061b51fb8339" />
+
 > [!NOTE]
 > Intended to be implemented as a cron job or scheduled task
 
