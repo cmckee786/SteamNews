@@ -1,0 +1,21 @@
+#Secrets
+test.json
+
+#Virtual Stuff
+venv/
+lib64
+env/
+testing/
+__pycache__/
+bin/
+include/
+lib/
+lib64
+*.pyc
+*.cfg
+
+#Logs
+*.log
+
+#Database
+*.db
