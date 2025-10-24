@@ -26,8 +26,7 @@ The cron job may look something like this:
 # Every hour of the day
     0 * * * * /path/to/steamnews.py >> /var/log/cronjob.log 2>&1
 ```
-This will append all stdout and stderr to if you so desire. Otherwise output is thrown away.
-
+This will append all stdout and stderr to a log file if you so desire. Otherwise output is thrown away.  
 Other versions may begin supporting an easily configurable frontend.
 
 ## Build
@@ -41,7 +40,7 @@ From here you should configure `config.json` with your Discord IDs and games. Af
 execute the code below from the root of the repo.
 
 ```bash
-python3 app.py
+python3 steamnews.py
 ```
 Schema
 --------
