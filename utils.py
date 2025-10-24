@@ -7,6 +7,7 @@ from pathlib import Path
 from time import localtime, strftime
 
 
+
 def log_rotate():
     log.basicConfig(
         level=log.INFO,
@@ -55,26 +56,30 @@ def get_news(game_item: dict):
             "count": 1,
             "feeds": "steam_community_announcements",
         }
-        print(f"STEAM NEWS: Fetching news - "
-              f"{game_item['appid']} - {game_item['name']}")
+        print(
+            f"\U0001f4f0 STEAM NEWS: Fetching news - "
+            f"{game_item['appid']} - {game_item['name']}"
+        )
         req_data = req.request("GET", fetch, params=p, timeout=5).json()
 
     except req.RequestException as e:
         print(e)
         log.error(e, exc_info=True)
 
-    return req_data['appnews']['newsitems'][0]
+    return req_data["appnews"]["newsitems"][0], game_item['name']
 
 
 def check_news_db(req_data, input_json: dict):
     hook_post = ()
     if req_data:
         try:
+            record_item = req_data[0]
+            app_name = req_data[1]
             time_stamp = strftime("%Y-%m-%d %H:%M")
-            post_date = strftime("%Y-%m-%d %H:%M", localtime(req_data["date"]))
-            title_new = req_data["title"]
-            url_new = req_data["url"]
-            appid = int(req_data["appid"])
+            post_date = strftime("%Y-%m-%d %H:%M", localtime(record_item["date"]))
+            title_new = record_item["title"]
+            url_new = record_item["url"]
+            appid = int(record_item["appid"])
             wh_url = input_json["WH_URL"]
             user_id = input_json["USER_ID"]
 
@@ -92,7 +97,7 @@ def check_news_db(req_data, input_json: dict):
                             "UPDATE news SET title = ?, url = ?, date = ? WHERE appid = ?",
                             (title_new, url_new, time_stamp, appid),
                         )
-                        log.info(f"Updated {appid} - {title_new} - {url_new}")
+                        log.info(f"Updated {app_name} - {title_new} - {url_new}")
                         hook_post = (
                             wh_url,
                             {
@@ -100,12 +105,15 @@ def check_news_db(req_data, input_json: dict):
                                 f"{post_date}{title_new}\n{url_new}"
                             },
                         )
+                        print(f"\t- Updated - NAME: {app_name} - APPID: {appid}")
+                    else:
+                        print("\t - No updates to record")
                 else:
                     c.execute(
                         "INSERT INTO news(appid, title, url, date) VALUES (?, ?, ?, ?)",
                         (appid, title_new, url_new, time_stamp),
                     )
-                    log.info(f"Added {appid} - {title_new} - {url_new}")
+                    log.info(f"New record {app_name} - {title_new} - {url_new}")
                     hook_post = (
                         wh_url,
                         {
@@ -113,6 +121,7 @@ def check_news_db(req_data, input_json: dict):
                             f"{post_date}\n{title_new}\n{url_new}"
                         },
                     )
+                    print(f"\t- New record - NAME: {app_name} - APPID: {appid}")
             c.close()
         except sqlite3.Error as e:
             print(e)

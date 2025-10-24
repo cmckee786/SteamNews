@@ -30,7 +30,7 @@ def main():
                 discord_post = utils.check_news_db(news_item, input_json)
                 if discord_post:
                     requests.post(url=discord_post[0], json=discord_post[1], timeout=3)
-        print("STEAM NEWS: Finished")
+        print("\U0001f4f0 STEAM NEWS: Finished")
     except (OSError, json.JSONDecodeError) as e:
         print(e)
         log.error(e, exc_info=True)
