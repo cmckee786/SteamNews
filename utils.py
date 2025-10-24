@@ -55,14 +55,15 @@ def get_news(game_item: dict):
             "count": 1,
             "feeds": "steam_community_announcements",
         }
-        print(f"STEAM NEWS: Fetching news - {game_item['appid']} - {game_item['name']}")
+        print(f"STEAM NEWS: Fetching news - "
+              f"{game_item['appid']} - {game_item['name']}")
         req_data = req.request("GET", fetch, params=p, timeout=5).json()
 
     except req.RequestException as e:
         print(e)
         log.error(e, exc_info=True)
 
-    return req_data
+    return req_data['appnews']['newsitems'][0]
 
 
 def check_news_db(req_data, input_json: dict):
