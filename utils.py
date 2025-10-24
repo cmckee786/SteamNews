@@ -56,10 +56,6 @@ def get_news(game_item: dict):
             "count": 1,
             "feeds": "steam_community_announcements",
         }
-        print(
-            f"\U0001f4f0 STEAM NEWS: Fetching news - "
-            f"{game_item['appid']} - {game_item['name']}"
-        )
         req_data = req.request("GET", fetch, params=p, timeout=5).json()
 
     except req.RequestException as e:
@@ -105,9 +101,7 @@ def check_news_db(req_data, input_json: dict):
                                 f"{post_date}{title_new}\n{url_new}"
                             },
                         )
-                        print(f"\t- Updated - NAME: {app_name} - APPID: {appid}")
-                    else:
-                        print("\t- No updates to record")
+                        print(f"Updated - NAME: {app_name} - APPID: {appid}")
                 else:
                     c.execute(
                         "INSERT INTO news(appid, title, url, date) VALUES (?, ?, ?, ?)",
@@ -121,7 +115,7 @@ def check_news_db(req_data, input_json: dict):
                             f"{post_date}\n{title_new}\n{url_new}"
                         },
                     )
-                    print(f"\t- New record - NAME: {app_name} - APPID: {appid}")
+                    print(f"New record - NAME: {app_name} - APPID: {appid}")
             c.close()
         except sqlite3.Error as e:
             print(e)
