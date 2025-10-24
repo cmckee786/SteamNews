@@ -12,6 +12,22 @@
 > [!NOTE]
 > Intended to be implemented as a cron job or scheduled task
 
+The cron job may look something like this:
+```bash
+# ┌──────────── [optional] seconds (0 - 59)
+# | ┌────────── minute (0 - 59)
+# | | ┌──────── hour (0 - 23)
+# | | | ┌────── day of month (1 - 31)
+# | | | | ┌──── month (1 - 12) OR jan,feb,mar,apr ...
+# | | | | | ┌── day of week (0 - 6, sunday=0) OR sun,mon ...
+# | | | | | |
+# * * * * * * command
+
+# Every hour of the day
+    0 * * * * /path/to/steamnews.py >> /var/log/cronjob.log 2>&1
+```
+This will append all stdout and stderr to if you so desire. Otherwise output is thrown away.
+
 Other versions may begin supporting an easily configurable frontend.
 
 ## Build
