@@ -3,7 +3,7 @@
 - Uses Steam Web API to get news for a list of Steam game application IDs
 - Edit config.json file accordingly with keys and webhook urls
 - Sends news through a user provided Discord webhook if there is a new announcement
-- Updates DB accordingly
+- Updates DB accordingly to track updates, only tracks latest news
 - Builds database if not found
 - Implements python built-in logging and log rotation
 
