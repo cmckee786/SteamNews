@@ -107,7 +107,7 @@ def check_news_db(req_data, input_json: dict):
                         )
                         print(f"\t- Updated - NAME: {app_name} - APPID: {appid}")
                     else:
-                        print("\t - No updates to record")
+                        print("\t- No updates to record")
                 else:
                     c.execute(
                         "INSERT INTO news(appid, title, url, date) VALUES (?, ?, ?, ?)",
