@@ -1,7 +1,7 @@
 # Steam News
 
 - Uses Steam Web API to get news for a list of Steam game application IDs
-    - At this time (2025) (api.steampowered.com/ISteamNews/GetNewsForApp/v2/)[https://partner.steamgames.com/doc/webapi/isteamnews] does not require an API Key
+    - At this time (2025) [api.steampowered.com/ISteamNews/GetNewsForApp/v2/](https://partner.steamgames.com/doc/webapi/isteamnews) does not require an API Key
 - Edit config.json file accordingly with keys and webhook urls
 - Sends news through a user provided Discord webhook if there is a new announcement
 - Updates DB accordingly to track updates, only tracks latest news
