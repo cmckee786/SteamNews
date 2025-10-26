@@ -101,7 +101,7 @@ def check_news_db(req_data, input_json: dict):
                                 f"{post_date}{title_new}\n{url_new}"
                             },
                         )
-                        print(f"Updated - NAME: {app_name} - APPID: {appid}")
+                        print(f"{time_stamp} Updated - NAME: {app_name} - APPID: {appid}")
                 else:
                     c.execute(
                         "INSERT INTO news(appid, title, url, date) VALUES (?, ?, ?, ?)",
@@ -115,7 +115,7 @@ def check_news_db(req_data, input_json: dict):
                             f"{post_date}\n{title_new}\n{url_new}"
                         },
                     )
-                    print(f"New record - NAME: {app_name} - APPID: {appid}")
+                    print(f"{time_stamp} New record - NAME: {app_name} - APPID: {appid}")
             c.close()
         except sqlite3.Error as e:
             print(e)

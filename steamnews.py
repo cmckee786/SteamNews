@@ -16,9 +16,9 @@ import concurrent.futures
 import json
 import logging as log
 import requests
-
-
 import utils
+
+
 
 
 def process_game(game, input_json):
@@ -50,7 +50,7 @@ def main():
             for future in concurrent.futures.as_completed(futures):
                 future.result()
 
-        print("\U0001f4f0 STEAM NEWS: Finished")
+        print("📰 STEAM NEWS: Finished")
     except (OSError, json.JSONDecodeError) as e:
         print(e)
         log.error(e, exc_info=True)
