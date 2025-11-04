@@ -59,6 +59,7 @@ def db_config_startup():
                     "📰 STEAM NEWS: config.json does not appear to be configured, hash matches build value",
                     "📰 STEAM NEWS: config.json requires a proper Discord ID, USER ID, and Webhook URL",
                     "📰 STEAM NEWS: Exiting...",
+                    sep="\n"
                 )
                 sys.exit(0)
         else:
