@@ -1,6 +1,6 @@
 #!/bin/python3
 
-# v1.3.5
+# v1.4.3
 # Authored by Christian McKee cmckee786@github.com
 
 # Uses Steam Web API to get news from a json formatted list of games
@@ -19,8 +19,6 @@ import requests
 import utils
 
 
-
-
 def process_game(game, input_json):
     """Process game; fetch news, check DB, post to Discord if new or updated"""
     try:
@@ -34,7 +32,7 @@ def process_game(game, input_json):
 
 def main():
     utils.log_rotate()
-    utils.db_startup()
+    utils.db_config_startup()
     try:
         with open("config.json", "r", encoding="utf-8") as f:
             input_json = json.load(f)

@@ -1,8 +1,11 @@
 # pylint: disable=wrong-import-order, missing-module-docstring, missing-function-docstring
+import hashlib
+import json
 import logging as log
 import logging.handlers
 import requests as req
 import sqlite3
+import sys
 from pathlib import Path
 from time import localtime, strftime
 
@@ -25,8 +28,9 @@ def log_rotate():
     news_logger.addHandler(rotate)
 
 
-def db_startup():
+def db_config_startup():
     if not Path("steam_news.db").exists():
+        print("📰 STEAM NEWS: steam_news.db not found, initializing...")
         try:
             with sqlite3.connect("steam_news.db", autocommit=True) as c:
                 c.execute(
@@ -45,6 +49,44 @@ def db_startup():
             print(e)
             log.error("Database setup failed", exc_info=True)
 
+    try:
+        if Path("config.json").exists():
+            config_hash = "7a141d5d82b9d3675532b599f2c69f6fc4a3b163b80635a995ade08cc56bd6b8"
+            with open("config.json", "rb") as f:
+                digest = hashlib.file_digest(f, "sha256")
+            if digest.hexdigest() == config_hash:
+                print(
+                    "📰 STEAM NEWS: config.json does not appear to be configured, hash matches build value",
+                    "📰 STEAM NEWS: config.json requires a proper Discord ID, USER ID, and Webhook URL",
+                    "📰 STEAM NEWS: Exiting...",
+                )
+                sys.exit(0)
+        else:
+            print("📰 STEAM NEWS: config.json not found, initializing...")
+            data = {
+                "DISCORD_ID": "DISCORD SERVER ID HERE",
+                "WH_URL": "WEBHOOK URL HERE",
+                "USER_ID": "DISCORD USER ID HERE",
+                "GAMES": [
+                    {"name": "Dyson Sphere Program", "appid": "1366540"},
+                    {"name": "Factorio", "appid": "427520"},
+                    {"name": "Metro 2033", "appid": "43110"},
+                    {"name": "Dead Space: Remastered", "appid": "1693980"},
+                ],
+            }
+            with open("config.json", "w", encoding="utf-8") as config:
+                json.dump(data, config, indent=2)
+            print(
+                "📰 STEAM NEWS: config.json built and waiting for configuration",
+                "📰 STEAM NEWS: Script will fail until valid URL and ID's provided",
+                "📰 STEAM NEWS: Exiting...",
+                sep="\n",
+            )
+            sys.exit(0)
+    except (OSError, IOError, BlockingIOError) as e:
+        print(e)
+        log.error("Config setup failed", exc_info=True)
+
 
 def get_news(game_item: dict):
     req_data = {}
@@ -62,7 +104,7 @@ def get_news(game_item: dict):
         print(e)
         log.error(e, exc_info=True)
 
-    return req_data["appnews"]["newsitems"][0], game_item['name']
+    return req_data["appnews"]["newsitems"][0], game_item["name"]
 
 
 def check_news_db(req_data, input_json: dict):
@@ -101,7 +143,9 @@ def check_news_db(req_data, input_json: dict):
                                 f"{post_date}\n{title_new}\n{url_new}"
                             },
                         )
-                        print(f"{time_stamp} Updated - NAME: {app_name} - APPID: {appid}")
+                        print(
+                            f"{time_stamp} Updated - NAME: {app_name} - APPID: {appid}"
+                        )
                 else:
                     c.execute(
                         "INSERT INTO news(appid, title, url, date) VALUES (?, ?, ?, ?)",
@@ -115,7 +159,9 @@ def check_news_db(req_data, input_json: dict):
                             f"{post_date}\n{title_new}\n{url_new}"
                         },
                     )
-                    print(f"{time_stamp} New record - NAME: {app_name} - APPID: {appid}")
+                    print(
+                        f"{time_stamp} New record - NAME: {app_name} - APPID: {appid}"
+                    )
             c.close()
         except sqlite3.Error as e:
             print(e)
