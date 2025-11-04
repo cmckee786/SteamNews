@@ -36,13 +36,11 @@ Other versions may begin supporting an easily configurable frontend.
 # From root of repo
 python3 -m venv . && source "$PWD"/bin/activate
 pip install -U pip && pip install -r requirements.txt
-```
-From here you should configure `config.json` with your Discord IDs and games. After such,
-execute the code below from the root of the repo.
-
-```bash
 python3 steamnews.py
 ```
+From here `config.json` should be configured with the appropriate user provided Discord Guild ID and
+User ID. These can be derived via Discord developer settings found [here](https://discord.com/developers/docs/activities/building-an-activity#step-0-enable-developer-mode).
+
 Schema
 --------
 
