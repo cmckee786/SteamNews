@@ -38,8 +38,15 @@ python3 -m venv . && source "$PWD"/bin/activate
 pip install -U pip && pip install -r requirements.txt
 python3 steamnews.py
 ```
-From here `config.json` should be configured with the appropriate user provided Discord Guild ID and
-User ID. These can be derived via Discord developer settings found [here](https://discord.com/developers/docs/activities/building-an-activity#step-0-enable-developer-mode).
+This will build the virtual python environment, install necessary dependencies and initialize
+the user `config.json` file. This config file is built in this way to protect the user from
+exposing any IDs or unique Discord webhooks.
+
+From here `config.json` should be configured with the appropriate user provided Discord Guild ID,
+User ID, and desired games. These can be derived via Discord developer mode found
+[here](https://discord.com/developers/docs/activities/building-an-activity#step-0-enable-developer-mode).
+
+After such the script should function as expected.
 
 Schema
 --------
