@@ -2,10 +2,10 @@
 
 - Uses Steam Web API to get news for a list of Steam game application IDs
     - At this time (2025) [api.steampowered.com/ISteamNews/GetNewsForApp/v2/](https://partner.steamgames.com/doc/webapi/isteamnews) does not require an API Key
-- Edit config.json file accordingly with keys and webhook urls
 - Sends news through a user provided Discord webhook if there is a new announcement
-- Updates DB accordingly to track updates, only tracks latest news
-- Builds database if not found
+- Updates DB accordingly to track updates, only attempts to track current posts
+- Builds database and config if not found
+- Edit config.json file accordingly with IDs and webhook URL
 - Implements python built-in logging and log rotation
 
 <img width="519" height="554" alt="Screenshot 2025-10-23 180313" src="https://github.com/user-attachments/assets/9682486e-643e-4235-b7e6-061b51fb8339" />
@@ -28,8 +28,7 @@ The cron job may look something like this:
     0 * * * * /path/to/steamnews.py
     # 0 * * * * /path/to/steamnews.py >> /var/log/cronjob.log 2>&1
 ```
-This will append all stdout and stderr to a log file if you so desire. Otherwise output is thrown away.  
-Other versions may begin supporting an easily configurable frontend.
+The commented command will append all stdout and stderr to a log file if you so desire.
 
 ## Build
 
