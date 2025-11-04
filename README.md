@@ -39,14 +39,19 @@ pip install -U pip && pip install -r requirements.txt
 python3 steamnews.py
 ```
 This will build the virtual python environment, install necessary dependencies and initialize
-the user `config.json` file. This config file is built in this way to protect the user from
-exposing any IDs or unique Discord webhooks.
+the user `config.json` file into a default state shown in the schema below. This config file is
+built in this way to protect the user from exposing any IDs or unique Discord webhooks should they
+fork or implement their own repo which may also unintentionally become public.
 
 From here `config.json` should be configured with the appropriate user provided Discord Guild ID,
-User ID, and desired games. These can be derived via Discord developer mode found
+User ID, and desired games to be tracked. These can be derived via Discord developer mode found
 [here](https://discord.com/developers/docs/activities/building-an-activity#step-0-enable-developer-mode).
 
-After such the script should function as expected.
+After such the script should function as expected and Discord notifications should begin hitting the
+configured Discord ID. **Note that the Steam Web API limits requests to 100,000 API calls every 24 hours.**
+
+> [!CAUTION]
+> This script implements threading! Rate limits may apply! USE WISELY!!
 
 Schema
 --------
