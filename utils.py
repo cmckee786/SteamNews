@@ -98,7 +98,7 @@ def check_news_db(req_data, input_json: dict):
                             wh_url,
                             {
                                 "content": f"<@{user_id}>\nInitial Release - "
-                                f"{post_date}{title_new}\n{url_new}"
+                                f"{post_date}\n{title_new}\n{url_new}"
                             },
                         )
                         print(f"{time_stamp} Updated - NAME: {app_name} - APPID: {appid}")
