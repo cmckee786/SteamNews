@@ -1,6 +1,6 @@
 #!/bin/python3
 
-# v1.4.3
+# v1.4.4
 # Authored by Christian McKee cmckee786@github.com
 
 # Uses Steam Web API to get news from a json formatted list of games

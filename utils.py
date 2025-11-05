@@ -51,15 +51,21 @@ def db_config_startup():
 
     try:
         if Path("config.json").exists():
-            config_hash = "7a141d5d82b9d3675532b599f2c69f6fc4a3b163b80635a995ade08cc56bd6b8"
+            config_hash = (
+                "7a141d5d82b9d3675532b599f2c69f6fc4a3b163b80635a995ade08cc56bd6b8",
+                "b97484b3d93312e229b7bb18fad431afcab5eaf9e65cd063a98385a624c3f780",
+            )
             with open("config.json", "rb") as f:
                 digest = hashlib.file_digest(f, "sha256")
-            if digest.hexdigest() == config_hash:
+            if (
+                tuple(digest.hexdigest()) == config_hash[0]
+                or tuple(digest.hexdigest()) == config_hash[1]
+            ):
                 print(
                     "📰 STEAM NEWS: config.json does not appear to be configured, hash matches build value",
                     "📰 STEAM NEWS: config.json requires a proper Discord ID, USER ID, and Webhook URL",
                     "📰 STEAM NEWS: Exiting...",
-                    sep="\n"
+                    sep="\n",
                 )
                 sys.exit(0)
         else:
