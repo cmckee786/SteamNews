@@ -11,7 +11,7 @@ from time import localtime, strftime
 
 
 
-def log_rotate():
+def log_rotate() -> None:
     log.basicConfig(
         level=log.INFO,
         encoding="utf-8",
@@ -28,7 +28,7 @@ def log_rotate():
     news_logger.addHandler(rotate)
 
 
-def db_config_startup():
+def db_config_startup() -> None:
     if not Path("steam_news.db").exists():
         print("📰 STEAM NEWS: steam_news.db not found, initializing...")
         try:
@@ -95,7 +95,7 @@ def db_config_startup():
         log.error("Config setup failed", exc_info=True)
 
 
-def get_news(game_item: dict):
+def get_news(game_item: dict[str, str]) -> tuple[dict[str, str], str] | None:
     req_data = {}
     try:
         fetch = "https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?"
@@ -114,7 +114,7 @@ def get_news(game_item: dict):
     return req_data["appnews"]["newsitems"][0], game_item["name"]
 
 
-def check_news_db(req_data, input_json: dict):
+def check_news_db(req_data, input_json: dict) -> tuple | None:
     hook_post = ()
     if req_data:
         try:
