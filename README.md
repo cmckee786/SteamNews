@@ -2,13 +2,13 @@
 
 - Uses Steam Web API to get news for a list of Steam game application IDs
     - At this time (2025) [api.steampowered.com/ISteamNews/GetNewsForApp/v2/](https://partner.steamgames.com/doc/webapi/isteamnews) does not require an API Key
-- Sends news through a user provided Discord webhook if there is a new announcement
+- Sends news through a user provided Discord webhook in batches if there is a new announcement
 - Updates DB accordingly to track updates, only attempts to track current posts
 - Builds database and config if not found
 - Edit config.json file accordingly with IDs and webhook URL
 - Implements python built-in logging and log rotation
-
-<img width="519" height="554" alt="Screenshot 2025-10-23 180313" src="https://github.com/user-attachments/assets/9682486e-643e-4235-b7e6-061b51fb8339" />
+  
+<img width="492" height="694" alt="image" src="https://github.com/user-attachments/assets/409a8b08-e9b9-4da0-98ba-172cc04ea502" />
 
 > [!NOTE]
 > Intended to be implemented as a cron job or scheduled task
