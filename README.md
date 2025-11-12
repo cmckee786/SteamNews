@@ -33,7 +33,7 @@ The commented command will append all stdout and stderr to a log file if you so 
 ## Build
 
 ```bash
-# From root of repo
+git clone https://github.com/cmckee786/SteamNews && cd SteamNews
 python3 -m venv . && source "$PWD"/bin/activate
 pip install -U pip && pip install -r requirements.txt
 python3 steamnews.py
@@ -41,7 +41,8 @@ python3 steamnews.py
 This will build the virtual python environment, install necessary dependencies and initialize
 the user `config.json` file into a default state shown in the schema below. This config file is
 built in this way to protect the user from exposing any IDs or unique Discord webhooks should they
-fork or implement their own repo which may also unintentionally become public.
+fork or implement their own repo which may also unintentionally become public. The `.gitignore` file
+is set to ignore `config.json` by default.
 
 From here `config.json` should be configured with the appropriate user provided Discord Guild ID,
 User ID, and desired games to be tracked. These can be derived via Discord developer mode found
