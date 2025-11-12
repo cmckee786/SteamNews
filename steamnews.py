@@ -1,6 +1,6 @@
 #!/bin/python3
 
-# v1.4.4
+# v1.5.1
 # Authored by Christian McKee cmckee786@github.com
 
 # Uses Steam Web API to get news from a json formatted list of games
@@ -19,18 +19,19 @@ import requests
 import utils
 
 
-def process_game(game: dict, input_json: dict) -> None:
-    """Process game; fetch news, check DB, post to Discord if new or updated for use in threading"""
+def process_game(game: dict, input_json: dict) -> str:
+    discord_post = ""
     try:
         news_item = utils.get_news(game)
         discord_post = utils.check_news_db(news_item, input_json)
-        if discord_post:
-            requests.post(url=discord_post[0], json=discord_post[1], timeout=3)
     except requests.RequestException as e:
         log.error(e, exc_info=True)
 
+    return discord_post
+
 
 def main() -> None:
+    batch_message: str = ""
     utils.log_rotate()
     utils.db_config_startup()
     try:
@@ -46,10 +47,17 @@ def main() -> None:
             ]
 
             for future in concurrent.futures.as_completed(futures):
-                future.result()
+                msg = future.result()
+                if msg:
+                    batch_message += f"{msg}\n\n"
 
+        requests.post(
+            url=(input_json.get("WH_URL", [])),
+            json={"content": batch_message},
+            timeout=3,
+        )
         print("📰 STEAM NEWS: Finished")
-    except (OSError, json.JSONDecodeError) as e:
+    except (OSError, json.JSONDecodeError, Exception) as e:
         print(e)
         log.error(e, exc_info=True)
 

@@ -15,7 +15,7 @@ def log_rotate() -> None:
     log.basicConfig(
         level=log.INFO,
         encoding="utf-8",
-        format="%(asctime)s - %(levelname)s - %(message)s",
+        format="[%(asctime)s][%(levelname)s] - %(message)s",
         filename="steamnews.log",
         filemode="a",
         datefmt="%Y-%m-%d %H:%M:%S",
@@ -101,7 +101,7 @@ def get_news(game_item: dict[str, str]) -> tuple[dict[str, str], str] | None:
         fetch = "https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?"
         p = {
             "appid": game_item["appid"],
-            "maxlength": 10,
+            "maxlength": 0,
             "count": 1,
             "feeds": "steam_community_announcements",
         }
@@ -114,8 +114,8 @@ def get_news(game_item: dict[str, str]) -> tuple[dict[str, str], str] | None:
     return req_data["appnews"]["newsitems"][0], game_item["name"]
 
 
-def check_news_db(req_data, input_json: dict) -> tuple | None:
-    hook_post = ()
+def check_news_db(req_data, input_json: dict) -> str:
+    hook_post = ""
     if req_data:
         try:
             record_item = req_data[0]
@@ -125,7 +125,6 @@ def check_news_db(req_data, input_json: dict) -> tuple | None:
             title_new = record_item["title"]
             url_new = record_item["url"]
             appid = int(record_item["appid"])
-            wh_url = input_json["WH_URL"]
             user_id = input_json["USER_ID"]
 
             with sqlite3.connect("steam_news.db", autocommit=True) as c:
@@ -142,32 +141,26 @@ def check_news_db(req_data, input_json: dict) -> tuple | None:
                             "UPDATE news SET title = ?, url = ?, date = ? WHERE appid = ?",
                             (title_new, url_new, time_stamp, appid),
                         )
-                        log.info(f"Updated {app_name} - {title_new} - {url_new}")
+                        log.info(f"[UPDATED] {app_name} - {title_new} - {url_new}")
                         hook_post = (
-                            wh_url,
-                            {
-                                "content": f"<@{user_id}>\nInitial Release - "
+                                f"<@{user_id}>\nInitial Release - "
                                 f"{post_date}\n{title_new}\n{url_new}"
-                            },
                         )
                         print(
-                            f"{time_stamp} Updated - NAME: {app_name} - APPID: {appid}"
+                            f"[{time_stamp}] Updated record - (NAME): {app_name} (APPID): {appid}"
                         )
                 else:
                     c.execute(
                         "INSERT INTO news(appid, title, url, date) VALUES (?, ?, ?, ?)",
                         (appid, title_new, url_new, time_stamp),
                     )
-                    log.info(f"New record {app_name} - {title_new} - {url_new}")
+                    log.info(f"[INSERTED] - {app_name} - {title_new} - {url_new}")
                     hook_post = (
-                        wh_url,
-                        {
-                            "content": f"<@{user_id}>\nInitial Release - "
+                            f"<@{user_id}>\nInitial Release - "
                             f"{post_date}\n{title_new}\n{url_new}"
-                        },
                     )
                     print(
-                        f"{time_stamp} New record - NAME: {app_name} - APPID: {appid}"
+                        f"[{time_stamp}] New record - (NAME): {app_name} (APPID): {appid}"
                     )
             c.close()
         except sqlite3.Error as e:
