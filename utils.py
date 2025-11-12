@@ -142,9 +142,9 @@ def check_news_db(req_data, input_json: dict) -> str:
                             (title_new, url_new, time_stamp, appid),
                         )
                         log.info(f"[UPDATED] {app_name} - {title_new} - {url_new}")
-                        hook_post = (
-                                f"<@{user_id}>\nInitial Release - "
-                                f"{post_date}\n{title_new}\n{url_new}"
+                        hook_post = str(
+                            f"🎮 **{app_name}**\n🗓️ Date Posted: {post_date}\n"
+                            f"{'-'*40}\n{title_new}\n<{url_new}>"
                         )
                         print(
                             f"[{time_stamp}] Updated record - (NAME): {app_name} (APPID): {appid}"
@@ -155,9 +155,9 @@ def check_news_db(req_data, input_json: dict) -> str:
                         (appid, title_new, url_new, time_stamp),
                     )
                     log.info(f"[INSERTED] - {app_name} - {title_new} - {url_new}")
-                    hook_post = (
-                            f"<@{user_id}>\nInitial Release - "
-                            f"{post_date}\n{title_new}\n{url_new}"
+                    hook_post = str(
+                        f"🎮 **{app_name}**\n🗓️ Date Posted: {post_date}\n"
+                        f"{'-'*40}\n{title_new}\n<{url_new}>"
                     )
                     print(
                         f"[{time_stamp}] New record - (NAME): {app_name} (APPID): {appid}"

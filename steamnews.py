@@ -1,6 +1,6 @@
 #!/bin/python3
 
-# v1.5.1
+# v1.5.2
 # Authored by Christian McKee cmckee786@github.com
 
 # Uses Steam Web API to get news from a json formatted list of games
@@ -38,6 +38,8 @@ def main() -> None:
         with open("config.json", "r", encoding="utf-8") as f:
             input_json = json.load(f)
 
+        wh_url = input_json.get("WH_URL", [])
+        user_id = input_json.get("USER_ID", [])
         games = input_json.get("GAMES", [])
         print(f"📰 STEAM NEWS: Processing {len(games)} games...")
 
@@ -52,8 +54,8 @@ def main() -> None:
                     batch_message += f"{msg}\n\n"
 
         requests.post(
-            url=(input_json.get("WH_URL", [])),
-            json={"content": batch_message},
+            url=wh_url,
+            json={"content": f"<@{user_id}>\n{batch_message}"},
             timeout=3,
         )
         print("📰 STEAM NEWS: Finished")
