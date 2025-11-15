@@ -53,11 +53,12 @@ def main() -> None:
                 if msg:
                     batch_message += f"{msg}\n\n"
 
-        requests.post(
-            url=wh_url,
-            json={"content": f"<@{user_id}>\n{batch_message}"},
-            timeout=3,
-        )
+        if batch_message:
+            requests.post(
+                url=wh_url,
+                json={"content": f"<@{user_id}>\n{batch_message}"},
+                timeout=3,
+            )
         print("📰 STEAM NEWS: Finished")
     except (OSError, json.JSONDecodeError, Exception) as e:
         print(e)
