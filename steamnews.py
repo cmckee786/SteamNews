@@ -31,6 +31,7 @@ def process_game(game: dict, input_json: dict) -> str:
 
 
 def main() -> None:
+    staging: list[str] = []
     batch_message: str = ""
     utils.log_rotate()
     utils.db_config_startup()
@@ -51,14 +52,40 @@ def main() -> None:
             for future in concurrent.futures.as_completed(futures):
                 msg = future.result()
                 if msg:
-                    batch_message += f"{msg}\n\n"
+                    staging.append(msg)
 
-        if batch_message:
-            requests.post(
-                url=wh_url,
-                json={"content": f"<@{user_id}>\n{batch_message}"},
-                timeout=3,
-            )
+        if staging:
+            count = 0
+            if len(staging) >= 5:
+                for item in staging:
+                    batch_message += f"{item}\n\n"
+                    count += 1
+                    if count >= 5:
+                        requests.post(
+                            url=wh_url,
+                            json={"content": f"<@{user_id}>\n{batch_message}"},
+                            timeout=3,
+                        )
+                        count = 0
+                        batch_message = ""
+                if batch_message:
+                    requests.post(
+                        url=wh_url,
+                        json={"content": f"<@{user_id}>\n{batch_message}"},
+                        timeout=3,
+                    )
+
+            else:
+                for item in staging:
+                    batch_message += f"{item}\n\n"
+                requests.post(
+                    url=wh_url,
+                    json={"content": f"<@{user_id}>\n{batch_message}"},
+                    timeout=3,
+                )
+            print("📰 STEAM NEWS: Batch message(s) sent...")
+        else:
+            print("📰 STEAM NEWS: No updates...")
         print("📰 STEAM NEWS: Finished")
     except (OSError, json.JSONDecodeError, Exception) as e:
         print(e)
