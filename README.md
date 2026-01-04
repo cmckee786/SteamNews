@@ -34,7 +34,7 @@ The commented command will append all stdout and stderr to a log file if you so 
 
 ```bash
 git clone https://github.com/cmckee786/SteamNews && cd SteamNews
-python3 -m venv . && source "$PWD"/bin/activate
+python3 -m venv venv/ && source "$PWD"venv/bin/activate
 pip install -U pip && pip install -r requirements.txt
 python3 steamnews.py
 ```
