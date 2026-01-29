@@ -1,6 +1,6 @@
 #!/bin/python3
 
-# v1.5.2
+# v1.5.4
 # Authored by Christian McKee cmckee786@github.com
 
 # Uses Steam Web API to get news from a json formatted list of games
@@ -19,11 +19,11 @@ import requests
 import utils
 
 
-def process_game(game: dict, input_json: dict) -> str:
+def process_game(game: dict) -> str:
     discord_post = ""
     try:
         news_item = utils.get_news(game)
-        discord_post = utils.check_news_db(news_item, input_json)
+        discord_post = utils.check_news_db(news_item)
     except requests.RequestException as e:
         log.error(e, exc_info=True)
 
@@ -46,7 +46,7 @@ def main() -> None:
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
             futures = [
-                executor.submit(process_game, game, input_json) for game in games
+                executor.submit(process_game, game) for game in games
             ]
 
             for future in concurrent.futures.as_completed(futures):

@@ -3,12 +3,12 @@ import hashlib
 import json
 import logging as log
 import logging.handlers
-import requests as req
 import sqlite3
 import sys
 from pathlib import Path
 from time import localtime, strftime
 
+import requests as req
 
 
 def log_rotate() -> None:
@@ -33,16 +33,14 @@ def db_config_startup() -> None:
         print("📰 STEAM NEWS: steam_news.db not found, initializing...")
         try:
             with sqlite3.connect("steam_news.db", autocommit=True) as c:
-                c.execute(
-                    """
+                c.execute("""
                     CREATE TABLE IF NOT EXISTS news (
                         appid INTEGER PRIMARY KEY,
                         title TEXT,
                         url TEXT,
                         date TEXT
                     )
-                """
-                )
+                """)
                 c.execute("CREATE INDEX IF NOT EXISTS idx_appid ON news (appid)")
             c.close()
         except (sqlite3.Error, OSError) as e:
@@ -114,18 +112,17 @@ def get_news(game_item: dict[str, str]) -> tuple[dict[str, str], str] | None:
     return req_data["appnews"]["newsitems"][0], game_item["name"]
 
 
-def check_news_db(req_data, input_json: dict) -> str:
+def check_news_db(req_data: tuple[dict[str, str], str] | None) -> str:
     hook_post = ""
     if req_data:
         try:
             record_item = req_data[0]
             app_name = req_data[1]
             time_stamp = strftime("%Y-%m-%d %H:%M")
-            post_date = strftime("%Y-%m-%d %H:%M", localtime(record_item["date"]))
+            post_date = strftime("%Y-%m-%d %H:%M", localtime(float(record_item["date"])))
             title_new = record_item["title"]
             url_new = record_item["url"]
             appid = int(record_item["appid"])
-            user_id = input_json["USER_ID"]
 
             with sqlite3.connect("steam_news.db", autocommit=True) as c:
                 check = c.execute(
