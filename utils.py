@@ -32,7 +32,7 @@ def db_config_startup() -> None:
     if not Path("steam_news.db").exists():
         print("📰 STEAM NEWS: steam_news.db not found, initializing...")
         try:
-            with sqlite3.connect("steam_news.db", autocommit=True) as c:
+            with sqlite3.connect("steam_news.db") as c:
                 c.execute("""
                     CREATE TABLE IF NOT EXISTS news (
                         appid INTEGER PRIMARY KEY,
@@ -124,7 +124,7 @@ def check_news_db(req_data: tuple[dict[str, str], str] | None) -> str:
             url_new = record_item["url"]
             appid = int(record_item["appid"])
 
-            with sqlite3.connect("steam_news.db", autocommit=True) as c:
+            with sqlite3.connect("steam_news.db") as c:
                 check = c.execute(
                     "SELECT appid FROM news WHERE appid = ?", (appid,)
                 ).fetchone()
