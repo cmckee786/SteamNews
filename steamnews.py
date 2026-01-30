@@ -55,33 +55,14 @@ def main() -> None:
                     staging.append(msg)
 
         if staging:
-            count = 0
-            if len(staging) >= 5:
-                for item in staging:
-                    batch_message += f"{item}\n\n"
-                    count += 1
-                    if count >= 5:
-                        requests.post(
-                            url=wh_url,
-                            json={"content": f"<@{user_id}>\n{batch_message}"},
-                            timeout=3,
-                        )
-                        count = 0
-                        batch_message = ""
-                if batch_message:
-                    requests.post(
-                        url=wh_url,
-                        json={"content": f"<@{user_id}>\n{batch_message}"},
-                        timeout=3,
-                    )
-
-            else:
-                for item in staging:
-                    batch_message += f"{item}\n\n"
+            for i in range(0, len(staging), 5):
+                batch = staging[i:i + 5]
+                batch_message = "\n\n".join(batch)
+                
                 requests.post(
                     url=wh_url,
                     json={"content": f"<@{user_id}>\n{batch_message}"},
-                    timeout=3,
+                    timeout=3
                 )
             print("📰 STEAM NEWS: Batch message(s) sent...")
         else:
