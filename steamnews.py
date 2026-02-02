@@ -1,6 +1,6 @@
 #!/bin/python3
 
-# v1.5.4
+# v1.5.6
 # Authored by Christian McKee cmckee786@github.com
 
 # Uses Steam Web API to get news from a json formatted list of games
@@ -18,9 +18,13 @@ import logging as log
 import requests
 import utils
 
+# If ThreadPoolExecutor max_workers is None or not given, it will
+# default to the number of processors on the machine, multiplied by 5
+WORKERS = None
 
-def process_game(game: dict) -> str:
-    discord_post = ""
+
+def process_game(game: dict) -> str | None:
+    discord_post = None
     try:
         news_item = utils.get_news(game)
         discord_post = utils.check_news_db(news_item)
@@ -44,10 +48,8 @@ def main() -> None:
         games = input_json.get("GAMES", [])
         print(f"📰 STEAM NEWS: Processing {len(games)} games...")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
-            futures = [
-                executor.submit(process_game, game) for game in games
-            ]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=WORKERS) as executor:
+            futures = [executor.submit(process_game, game) for game in games]
 
             for future in concurrent.futures.as_completed(futures):
                 msg = future.result()
@@ -56,15 +58,15 @@ def main() -> None:
 
         if staging:
             for i in range(0, len(staging), 5):
-                batch = staging[i:i + 5]
+                batch = staging[i : i + 5]
                 batch_message = "\n\n".join(batch)
-                
+
                 requests.post(
                     url=wh_url,
                     json={"content": f"<@{user_id}>\n{batch_message}"},
-                    timeout=3
+                    timeout=3,
                 )
-            print("📰 STEAM NEWS: Batch message(s) sent...")
+            print("📰 STEAM NEWS: Batch messages sent...")
         else:
             print("📰 STEAM NEWS: No updates...")
         print("📰 STEAM NEWS: Finished")

@@ -3,6 +3,7 @@ test.json
 config.json
 
 #Virtual Stuff
+.venv
 venv/
 lib64
 env/
@@ -14,6 +15,9 @@ lib/
 lib64
 *.pyc
 *.cfg
+
+#UV
+.python-version
 
 #Logs
 *.log

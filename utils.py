@@ -50,18 +50,14 @@ def db_config_startup() -> None:
     try:
         if Path("config.json").exists():
             config_hash = (
-                "7a141d5d82b9d3675532b599f2c69f6fc4a3b163b80635a995ade08cc56bd6b8",
-                "b97484b3d93312e229b7bb18fad431afcab5eaf9e65cd063a98385a624c3f780",
+                "8442997f61164ff9f2aa6c0ba08032195b71cf467dc9114ff3bac024de390ec4"
             )
             with open("config.json", "rb") as f:
                 digest = hashlib.file_digest(f, "sha256")
-            if (
-                tuple(digest.hexdigest()) == config_hash[0]
-                or tuple(digest.hexdigest()) == config_hash[1]
-            ):
+            if tuple(digest.hexdigest()) == config_hash:
                 print(
                     "📰 STEAM NEWS: config.json does not appear to be configured, hash matches build value",
-                    "📰 STEAM NEWS: config.json requires a proper Discord ID, USER ID, and Webhook URL",
+                    "📰 STEAM NEWS: config.json requires a proper USER ID, and Webhook URL",
                     "📰 STEAM NEWS: Exiting...",
                     sep="\n",
                 )
@@ -69,7 +65,6 @@ def db_config_startup() -> None:
         else:
             print("📰 STEAM NEWS: config.json not found, initializing...")
             data = {
-                "DISCORD_ID": "DISCORD SERVER ID HERE",
                 "WH_URL": "WEBHOOK URL HERE",
                 "USER_ID": "DISCORD USER ID HERE",
                 "GAMES": [
@@ -141,7 +136,7 @@ def check_news_db(req_data: tuple[dict[str, str], str] | None) -> str:
                         log.info(f"[UPDATED] {app_name} - {title_new} - {url_new}")
                         hook_post = str(
                             f"🎮 **{app_name}**\n🗓️ Date Posted: {post_date}\n"
-                            f"{'-'*40}\n{title_new}\n<{url_new}>"
+                            f"{'-' * 40}\n{title_new}\n<{url_new}>"
                         )
                         print(
                             f"[{time_stamp}] Updated record - (NAME): {app_name} (APPID): {appid}"
@@ -154,7 +149,7 @@ def check_news_db(req_data: tuple[dict[str, str], str] | None) -> str:
                     log.info(f"[INSERTED] - {app_name} - {title_new} - {url_new}")
                     hook_post = str(
                         f"🎮 **{app_name}**\n🗓️ Date Posted: {post_date}\n"
-                        f"{'-'*40}\n{title_new}\n<{url_new}>"
+                        f"{'-' * 40}\n{title_new}\n<{url_new}>"
                     )
                     print(
                         f"[{time_stamp}] New record - (NAME): {app_name} (APPID): {appid}"
