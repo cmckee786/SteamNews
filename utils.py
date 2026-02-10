@@ -49,19 +49,19 @@ def db_config_startup() -> None:
 
     try:
         if Path("config.json").exists():
-            config_hash = (
-                "8442997f61164ff9f2aa6c0ba08032195b71cf467dc9114ff3bac024de390ec4"
-            )
-            with open("config.json", "rb") as f:
-                digest = hashlib.file_digest(f, "sha256")
-            if tuple(digest.hexdigest()) == config_hash:
-                print(
-                    "📰 STEAM NEWS: config.json does not appear to be configured, hash matches build value",
-                    "📰 STEAM NEWS: config.json requires a proper USER ID, and Webhook URL",
-                    "📰 STEAM NEWS: Exiting...",
-                    sep="\n",
-                )
-                sys.exit(0)
+            with open("config.json", "r", encoding="utf-8") as f:
+                config = json.load(f)
+                wh_url = config.get("WH_URL", [])
+                user_id = config.get("USER_ID", [])
+                if "WEBHOOK URL HERE" in wh_url or "DISCORD USER ID HERE" in user_id:
+                    print(
+                        "📰 STEAM NEWS: config.json does not appear to be configured ",
+                        "📰 STEAM NEWS: config.json requires a proper USER ID, and Webhook URL",
+                        f"📰 STEAM NEWS: Current config.json\n{json.dumps(config, indent=2)}\n",
+                        "📰 STEAM NEWS: Exiting...",
+                        sep="\n",
+                    )
+                    sys.exit(0)
         else:
             print("📰 STEAM NEWS: config.json not found, initializing...")
             data = {
@@ -114,7 +114,9 @@ def check_news_db(req_data: tuple[dict[str, str], str] | None) -> str:
             record_item = req_data[0]
             app_name = req_data[1]
             time_stamp = strftime("%Y-%m-%d %H:%M")
-            post_date = strftime("%Y-%m-%d %H:%M", localtime(float(record_item["date"])))
+            post_date = strftime(
+                "%Y-%m-%d %H:%M", localtime(float(record_item["date"]))
+            )
             title_new = record_item["title"]
             url_new = record_item["url"]
             appid = int(record_item["appid"])
