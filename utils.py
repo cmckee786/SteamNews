@@ -1,5 +1,4 @@
 # pylint: disable=wrong-import-order, missing-module-docstring, missing-function-docstring
-import hashlib
 import json
 import logging as log
 import logging.handlers
@@ -78,7 +77,7 @@ def db_config_startup() -> None:
                 json.dump(data, config, indent=2)
             print(
                 "📰 STEAM NEWS: config.json built and waiting for configuration",
-                "📰 STEAM NEWS: Script will fail until valid URL and ID's provided",
+                "📰 STEAM NEWS: Script will fail until valid Webhook URL and User ID provided",
                 "📰 STEAM NEWS: Exiting...",
                 sep="\n",
             )

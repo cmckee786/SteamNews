@@ -1,6 +1,6 @@
 [project]
 name = "steamnews"
-version = "1.5.6"
+version = "1.5.7"
 description = "Python script to notify of Steam game news updates via Discord"
 readme = "README.md"
 requires-python = ">=3.13"
