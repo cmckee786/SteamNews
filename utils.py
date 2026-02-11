@@ -1,5 +1,6 @@
 # pylint: disable=wrong-import-order, missing-module-docstring, missing-function-docstring
 import json
+import hashlib
 import logging as log
 import logging.handlers
 import sqlite3
@@ -48,16 +49,19 @@ def db_config_startup() -> None:
 
     try:
         if Path("config.json").exists():
-            with open("config.json", "r", encoding="utf-8") as f:
-                config = json.load(f)
-                wh_url = config.get("WH_URL", [])
-                user_id = config.get("USER_ID", [])
-                if "WEBHOOK URL HERE" in wh_url or "DISCORD USER ID HERE" in user_id:
+            config_hash = (
+                "a1615e74a5148bafd447919c4f490e73a06d3d786d2706e04c10442f0485b9cb"
+            )
+            with open("config.json", "rb") as f:
+                digest = hashlib.file_digest(f, "sha256")
+            if digest.hexdigest() == config_hash:
+                with open("config.json", "r") as f:
+                    config = json.load(f)
                     print(
-                        "📰 STEAM NEWS: config.json does not appear to be configured ",
-                        "📰 STEAM NEWS: config.json requires a proper USER ID, and Webhook URL",
-                        f"📰 STEAM NEWS: Current config.json\n{json.dumps(config, indent=2)}\n",
-                        "📰 STEAM NEWS: Exiting...",
+                        "📰 STEAM NEWS: config.json does not appear to be configured, hash matches build value",
+                        "📰 STEAM NEWS: config.json requires a proper user id, and webhook url",
+                        f"📰 STEAM NEWS: current config.json\n\n{json.dumps(config, indent=2)}\n",
+                        "📰 STEAM NEWS: exiting...",
                         sep="\n",
                     )
                     sys.exit(0)
