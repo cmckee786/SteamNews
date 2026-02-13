@@ -50,7 +50,7 @@ def db_config_startup() -> None:
     try:
         if Path("config.json").exists():
             config_hash = (
-                "a1615e74a5148bafd447919c4f490e73a06d3d786d2706e04c10442f0485b9cb"
+                "e442ad6b1190f3053ecd13e8f9d44ea411c64cdb192f50cd140ed92d12ae2f8e"
             )
             with open("config.json", "rb") as f:
                 digest = hashlib.file_digest(f, "sha256")
@@ -60,7 +60,7 @@ def db_config_startup() -> None:
                     print(
                         "📰 STEAM NEWS: config.json does not appear to be configured, hash matches build value",
                         "📰 STEAM NEWS: config.json requires a proper user id, and webhook url",
-                        f"📰 STEAM NEWS: current config.json\n\n{json.dumps(config, indent=2)}\n",
+                        f"📰 STEAM NEWS: current config.json:\n\n{json.dumps(config, indent=2)}\n",
                         "📰 STEAM NEWS: exiting...",
                         sep="\n",
                     )
@@ -68,6 +68,7 @@ def db_config_startup() -> None:
         else:
             print("📰 STEAM NEWS: config.json not found, initializing...")
             data = {
+                "VERSION": "1",
                 "WH_URL": "WEBHOOK URL HERE",
                 "USER_ID": "DISCORD USER ID HERE",
                 "GAMES": [
