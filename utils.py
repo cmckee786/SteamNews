@@ -3,6 +3,7 @@ import json
 import hashlib
 import logging as log
 import logging.handlers
+import os
 import sqlite3
 import sys
 from pathlib import Path
@@ -86,6 +87,7 @@ def db_config_startup() -> None:
                 "📰 STEAM NEWS: Exiting...",
                 sep="\n",
             )
+            os.chmod(path="config.json", mode=0o600)
             sys.exit(0)
     except (OSError, IOError, BlockingIOError) as e:
         print(e)
