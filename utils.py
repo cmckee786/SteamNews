@@ -147,7 +147,7 @@ def check_news_db(req_data: tuple[dict[str, str], str] | None) -> str:
                             f"{'-' * 40}\n{title_new}\n<{url_new}>"
                         )
                         print(
-                            f"[{time_stamp}] Updated record - (NAME): {app_name} (APPID): {appid}"
+                            f"[{time_stamp}] Updated record - (NAME): {app_name:<25} (APPID): {appid}"
                         )
                 else:
                     c.execute(
@@ -160,7 +160,7 @@ def check_news_db(req_data: tuple[dict[str, str], str] | None) -> str:
                         f"{'-' * 40}\n{title_new}\n<{url_new}>"
                     )
                     print(
-                        f"[{time_stamp}] New record - (NAME): {app_name} (APPID): {appid}"
+                        f"[{time_stamp}] New record - (NAME): {app_name:<25} (APPID): {appid}"
                     )
             c.close()
         except sqlite3.Error as e:
