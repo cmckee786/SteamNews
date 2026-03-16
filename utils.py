@@ -3,7 +3,7 @@ import json
 import hashlib
 import logging as log
 import logging.handlers
-import os
+import subprocess
 import sqlite3
 import sys
 from pathlib import Path
@@ -68,7 +68,7 @@ def db_config_startup() -> None:
                     sys.exit(0)
         else:
             print("📰 STEAM NEWS: config.json not found, initializing...")
-            data = {
+            data: dict = {
                 "VERSION": "1",
                 "WH_URL": "WEBHOOK URL HERE",
                 "USER_ID": "DISCORD USER ID HERE",
@@ -79,6 +79,8 @@ def db_config_startup() -> None:
                     {"name": "Dead Space: Remastered", "appid": "1693980"},
                 ],
             }
+            config_init: str = "touch config.json && chmod 0600 config.json"
+            subprocess.run(config_init, shell=True)
             with open("config.json", "w", encoding="utf-8") as config:
                 json.dump(data, config, indent=2)
             print(
@@ -87,7 +89,6 @@ def db_config_startup() -> None:
                 "📰 STEAM NEWS: Exiting...",
                 sep="\n",
             )
-            os.chmod(path="config.json", mode=0o600)
             sys.exit(0)
     except (OSError, IOError, BlockingIOError) as e:
         print(e)
