@@ -1,6 +1,6 @@
 #!/bin/python3
 
-# v1.5.11
+# v1.5.12
 # Authored by Christian McKee cmckee786@github.com
 
 # Uses Steam Web API to get news from a json formatted list of games
@@ -17,6 +17,7 @@ import json
 import logging as log
 import requests
 import utils
+from utils import print
 
 # If ThreadPoolExecutor max_workers is None or not given, it will
 # default to the number of processors on the machine, multiplied by 5

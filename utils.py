@@ -11,6 +11,13 @@ from time import localtime, strftime
 
 import requests as req
 
+_print = print
+time_stamp = strftime("%Y-%m-%d %H:%M")
+
+
+def print(*args, **kw):
+    _print("[%s]" % f"{time_stamp}", *args, **kw)
+
 
 def log_rotate() -> None:
     log.basicConfig(
@@ -120,7 +127,6 @@ def check_news_db(req_data: tuple[dict[str, str], str] | None) -> str:
         try:
             record_item = req_data[0]
             app_name = req_data[1]
-            time_stamp = strftime("%Y-%m-%d %H:%M")
             post_date = strftime(
                 "%Y-%m-%d %H:%M", localtime(float(record_item["date"]))
             )
@@ -148,7 +154,7 @@ def check_news_db(req_data: tuple[dict[str, str], str] | None) -> str:
                             f"{'-' * 40}\n{title_new}\n<{url_new}>"
                         )
                         print(
-                            f"[{time_stamp}] Updated record - (NAME): {app_name:<25} (APPID): {appid}"
+                            f"Updated record - (NAME): {app_name:<25} (APPID): {appid}"
                         )
                 else:
                     c.execute(
@@ -160,9 +166,7 @@ def check_news_db(req_data: tuple[dict[str, str], str] | None) -> str:
                         f"🎮 **{app_name}**\n🗓️ Date Posted: {post_date}\n"
                         f"{'-' * 40}\n{title_new}\n<{url_new}>"
                     )
-                    print(
-                        f"[{time_stamp}] New record - (NAME): {app_name:<25} (APPID): {appid}"
-                    )
+                    print(f"New record - (NAME): {app_name:<25} (APPID): {appid}")
             c.close()
         except sqlite3.Error as e:
             print(e)
