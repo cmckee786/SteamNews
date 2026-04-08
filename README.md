@@ -68,6 +68,7 @@ configured Discord Webhook. **Note that the Steam Web API limits requests to 100
 
 ```json
 {
+  "VERSION": "1",
   "WH_URL": "WEBHOOK URL HERE",
   "USER_ID": "DISCORD USER ID HERE",
   "GAMES": [
