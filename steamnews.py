@@ -1,6 +1,6 @@
 #!/bin/python3
 
-# v1.5.12
+# v1.6.2
 # Authored by Christian McKee cmckee786@github.com
 
 # Uses Steam Web API to get news from a json formatted list of games
@@ -12,12 +12,14 @@
 #   - Implement frontend with search(?)
 #       - jinja? django?
 
+import sys
+import subprocess
 import concurrent.futures
 import json
 import logging as log
 import requests
 import utils
-from utils import print
+from utils import print, cli_args
 
 # If ThreadPoolExecutor max_workers is None or not given, it will
 # default to the number of processors on the machine, multiplied by 5
@@ -39,7 +41,18 @@ def main() -> None:
     staging: list[str] = []
     batch_message: str = ""
     utils.log_rotate()
-    utils.db_config_startup()
+    utils.db_startup()
+    utils.config_startup()
+    parser = cli_args().parse_args()
+
+    if parser.rebuild:
+        print("📰 STEAM NEWS: Removing database...")
+        subprocess.run(["rm", "steam_news.db"])
+        utils.db_startup()
+        sys.exit(0)
+    if parser.print_all:
+        utils.db_print_all()
+
     try:
         with open("config.json", "r", encoding="utf-8") as f:
             input_json = json.load(f)

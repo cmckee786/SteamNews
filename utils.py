@@ -1,4 +1,5 @@
 # pylint: disable=wrong-import-order, missing-module-docstring, missing-function-docstring
+import argparse
 import json
 import hashlib
 import logging as log
@@ -36,7 +37,32 @@ def log_rotate() -> None:
     news_logger.addHandler(rotate)
 
 
-def db_config_startup() -> None:
+def cli_args() -> argparse.ArgumentParser:
+    """CLI options to skip validated or ignored link storage and more
+    Create and return argparse object with configured argument attributes
+    """
+    args_parser = argparse.ArgumentParser(
+        description="Attempts to grab Steam news updates based on configured"
+        " game application IDs"
+    )
+    args_parser.add_argument(
+        "-a",
+        "--all-records",
+        action="store_true",
+        help="print all currently stored records",
+        dest="print_all",
+    )
+    args_parser.add_argument(
+        "-r",
+        "--rebuild-database",
+        action="store_true",
+        help="remove and rebuild database",
+        dest="rebuild",
+    )
+    return args_parser
+
+
+def db_startup() -> None:
     if not Path("steam_news.db").exists():
         print("📰 STEAM NEWS: steam_news.db not found, initializing...")
         try:
@@ -44,6 +70,7 @@ def db_config_startup() -> None:
                 c.execute("""
                     CREATE TABLE IF NOT EXISTS news (
                         appid INTEGER PRIMARY KEY,
+                        name TEXT,
                         title TEXT,
                         url TEXT,
                         date TEXT
@@ -55,6 +82,7 @@ def db_config_startup() -> None:
             print(e)
             log.error("Database setup failed", exc_info=True)
 
+def config_startup() -> None:
     try:
         if Path("config.json").exists():
             config_hash = (
@@ -87,7 +115,7 @@ def db_config_startup() -> None:
                 ],
             }
             config_init: str = "touch config.json && chmod 0600 config.json"
-            subprocess.run(config_init, shell=True)
+            subprocess.run(config_init)
             with open("config.json", "w", encoding="utf-8") as config:
                 json.dump(data, config, indent=2)
             print(
@@ -102,7 +130,22 @@ def db_config_startup() -> None:
         log.error("Config setup failed", exc_info=True)
 
 
-def get_news(game_item: dict[str, str]) -> tuple[dict[str, str], str] | None:
+def db_print_all():
+    if Path("steam_news.db").exists():
+        with sqlite3.connect("steam_news.db") as c:
+            c.row_factory = sqlite3.Row
+            check = c.execute("SELECT * FROM news").fetchall()
+        if check:
+            print(f"📰 STEAM NEWS: Printing all records - Total ({len(check)})")
+            for item in check:
+                print(
+                    f"📰 STEAM NEWS: (NAME): {item['name']:<25} ",
+                    f"(APPID): {item['appid']:<10} (NEWS TITLE): {item['title']}",
+                )
+    sys.exit(0)
+
+
+def get_news(game_item: dict[str, str]) -> tuple[dict[str, str], dict] | None:
     req_data = {}
     try:
         fetch = "https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?"
@@ -118,15 +161,15 @@ def get_news(game_item: dict[str, str]) -> tuple[dict[str, str], str] | None:
         print(e)
         log.error(e, exc_info=True)
 
-    return req_data["appnews"]["newsitems"][0], game_item["name"]
+    return req_data["appnews"]["newsitems"][0], game_item
 
 
-def check_news_db(req_data: tuple[dict[str, str], str] | None) -> str:
+def check_news_db(req_data: tuple[dict[str, str], dict] | None) -> str:
     hook_post = ""
     if req_data:
         try:
             record_item = req_data[0]
-            app_name = req_data[1]
+            app_name = req_data[1]["name"]
             post_date = strftime(
                 "%Y-%m-%d %H:%M", localtime(float(record_item["date"]))
             )
@@ -154,19 +197,21 @@ def check_news_db(req_data: tuple[dict[str, str], str] | None) -> str:
                             f"{'-' * 40}\n{title_new}\n<{url_new}>"
                         )
                         print(
-                            f"Updated record - (NAME): {app_name:<25} (APPID): {appid}"
+                            f"📰 STEAM NEWS: Updated record - (NAME): {app_name:<25} (APPID): {appid}"
                         )
                 else:
                     c.execute(
-                        "INSERT INTO news(appid, title, url, date) VALUES (?, ?, ?, ?)",
-                        (appid, title_new, url_new, time_stamp),
+                        "INSERT INTO news(appid, name, title, url, date) VALUES (?, ?, ?, ?, ?)",
+                        (appid, app_name, title_new, url_new, time_stamp),
                     )
                     log.info(f"[INSERTED] - {app_name} - {title_new} - {url_new}")
                     hook_post = str(
                         f"🎮 **{app_name}**\n🗓️ Date Posted: {post_date}\n"
                         f"{'-' * 40}\n{title_new}\n<{url_new}>"
                     )
-                    print(f"New record - (NAME): {app_name:<25} (APPID): {appid}")
+                    print(
+                        f"📰 STEAM NEWS: New record - (NAME): {app_name:<25} (APPID): {appid}"
+                    )
             c.close()
         except sqlite3.Error as e:
             print(e)
