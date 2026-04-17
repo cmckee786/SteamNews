@@ -64,7 +64,7 @@ def cli_args() -> argparse.ArgumentParser:
         "--rebuild-database",
         action="store_true",
         help="remove and rebuild database",
-        dest="rebuild",
+        dest="db_rebuild",
     )
     return args_parser
 

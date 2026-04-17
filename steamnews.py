@@ -45,12 +45,14 @@ def main() -> None:
     utils.config_startup()
     parser = cli_args().parse_args()
 
-    if parser.rebuild:
+    if parser.db_rebuild:
         print("📰 STEAM NEWS: Removing database...")
         subprocess.run(["rm", "steam_news.db"])
+        print("📰 STEAM NEWS: Initializing new database...")
         utils.db_startup()
+        print("📰 STEAM NEWS: Done")
         sys.exit(0)
-    if parser.print_records:
+    if parser.print_config:
         utils.print_config()
     if parser.print_all:
         utils.db_print_all()
