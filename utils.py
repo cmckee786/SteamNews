@@ -43,7 +43,7 @@ def cli_args() -> argparse.ArgumentParser:
     """
     args_parser = argparse.ArgumentParser(
         description="Attempts to grab Steam news updates based on configured"
-        " game application IDs"
+        " game application IDs and sends updates to a Discord Webhook"
     )
     args_parser.add_argument(
         "-a",
@@ -51,6 +51,13 @@ def cli_args() -> argparse.ArgumentParser:
         action="store_true",
         help="print all currently stored records",
         dest="print_all",
+    )
+    args_parser.add_argument(
+        "-p",
+        "--print-config",
+        action="store_true",
+        help="print currently stored config",
+        dest="print_config",
     )
     args_parser.add_argument(
         "-r",
@@ -63,6 +70,7 @@ def cli_args() -> argparse.ArgumentParser:
 
 
 def db_startup() -> None:
+    """Initialize sqlite3 database if not found"""
     if not Path("steam_news.db").exists():
         print("📰 STEAM NEWS: steam_news.db not found, initializing...")
         try:
@@ -82,7 +90,11 @@ def db_startup() -> None:
             print(e)
             log.error("Database setup failed", exc_info=True)
 
+
 def config_startup() -> None:
+    """Initialize config.json if not found, will fail the script if config.json
+    matches a default state
+    """
     try:
         if Path("config.json").exists():
             config_hash = (
@@ -130,7 +142,17 @@ def config_startup() -> None:
         log.error("Config setup failed", exc_info=True)
 
 
+def print_config():
+    """Print the current config.json configuration"""
+    print("📰 STEAM NEWS: Printing current configuration...")
+    if Path("config.json").exists():
+        with open("config.json", "r", encoding="utf-8") as config:
+            data = json.load(config)
+            print(f"📰 STEAM NEWS:\n{json.dumps(data, indent=2)}")
+    sys.exit(0)
+
 def db_print_all():
+    """Print the current state of stored records"""
     if Path("steam_news.db").exists():
         with sqlite3.connect("steam_news.db") as c:
             c.row_factory = sqlite3.Row

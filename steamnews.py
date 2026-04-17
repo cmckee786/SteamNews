@@ -1,6 +1,6 @@
 #!/bin/python3
 
-# v1.6.2
+# v1.6.3
 # Authored by Christian McKee cmckee786@github.com
 
 # Uses Steam Web API to get news from a json formatted list of games
@@ -50,6 +50,8 @@ def main() -> None:
         subprocess.run(["rm", "steam_news.db"])
         utils.db_startup()
         sys.exit(0)
+    if parser.print_records:
+        utils.print_config()
     if parser.print_all:
         utils.db_print_all()
 
